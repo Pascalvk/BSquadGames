@@ -1,8 +1,11 @@
-﻿@page "/connectMain"
+﻿@using BSquadGames.Classes.ConnectFour
+@page "/connectMain"
 @rendermode InteractiveServer
 <h3>Connect four</h3>
 <div>Loading...</div>
 
-@code {
+<div> @player.Name</div>
 
+@code {
+    ConnectFourPlayer player = new("Test");
 }

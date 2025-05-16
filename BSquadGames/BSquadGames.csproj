@@ -7,9 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Classes\Common\" />
-    <Folder Include="Classes\ConnectFour\" />
-    <Folder Include="Classes\Battleship\" />
     <Folder Include="Components\Pages\Battleship\" />
     <Folder Include="wwwroot\CSS\" />
     <Folder Include="wwwroot\Icons\" />
