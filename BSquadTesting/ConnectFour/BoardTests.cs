@@ -24,7 +24,7 @@ namespace BSquadTesting.ConnectFour
         }
 
         [TestMethod]
-        public void CheckWin_HorizontalWin_ReturnsFalse()
+        public void CheckWin_HorizontalNoWin_ReturnsFalse()
         {
             ConnectFourBoard board = new();
 
@@ -50,7 +50,7 @@ namespace BSquadTesting.ConnectFour
         }
 
         [TestMethod]
-        public void CheckWin_VerticalWin_ReturnsFalse()
+        public void CheckWin_VerticalNoWin_ReturnsFalse()
         {
             ConnectFourBoard board = new();
 
@@ -89,7 +89,7 @@ namespace BSquadTesting.ConnectFour
         }
 
         [TestMethod]
-        public void CheckWin_DiagonalWin_ReturnsFalse()
+        public void CheckWin_DiagonalNoWin_ReturnsFalse()
         {
             ConnectFourBoard board = new();
 
