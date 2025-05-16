@@ -39,5 +39,10 @@
 
             return false;
         }
+
+        public void SetDiscAt(int row, int col, int player)
+        {
+            grid[row, col] = player;
+        }
     }
 }
