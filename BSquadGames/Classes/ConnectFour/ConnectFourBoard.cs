@@ -36,7 +36,7 @@
             {
                 for (int j = 0; j <= Rows - WinLenght; j++)
                 {
-                    if (grid[i, j] == player && grid[i, j + 1] == player && grid[i, j + 2] == player && grid[i, j + 3] == player)
+                    if (grid[i, j] == player && grid[i + 1, j] == player && grid[i + 2, j] == player && grid[i + 3, j] == player)
                     {
                         return true;
                     }
