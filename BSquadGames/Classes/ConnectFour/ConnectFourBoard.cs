@@ -32,7 +32,16 @@
             }
 
             // Check vertical
-
+            for (int i = 0; i < Columns; i++)
+            {
+                for (int j = 0; j <= Rows - WinLenght; j++)
+                {
+                    if (grid[i, j] == player && grid[i, j + 1] == player && grid[i, j + 2] == player && grid[i, j + 3] == player)
+                    {
+                        return true;
+                    }
+                }
+            }
 
             // Check diagonal
 
