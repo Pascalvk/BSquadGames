@@ -4,6 +4,7 @@
     {
         public BattleshipPlayer(string name) : base(name)
         {
+            Console.WriteLine("Hello");
         }
     }
 }
