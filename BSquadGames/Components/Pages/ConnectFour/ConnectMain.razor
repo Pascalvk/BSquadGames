@@ -1,11 +1,69 @@
 ﻿@using BSquadGames.Classes.ConnectFour
 @page "/connectMain"
 @rendermode InteractiveServer
+
+<link href="CSS/ConnectFourCSS.css" rel="stylesheet">
+
 <h3>Connect four</h3>
 <div>Loading...</div>
 
 <div> @player.Name</div>
 
+<div class="connect-grid">
+    @for (int row = 0; row < 6; row++){
+        @for (int col = 0; col < 7; col++){
+            <div class="connect-square">
+                @if(Board.grid[row, col] == 1){
+                    <div>1</div>
+                }
+                else if(Board.grid[row, col] == 2){
+                    <div>2</div>
+                }
+                else{
+                    <div>Leeg</div>
+                }
+
+            </div>
+        }
+
+    }
+
+</div>
+<div></div>
+<div>@Board.GameWinner</div>
+<div></div>
+
+<button @onclick="NewGame">New Game!</button>
+<button @onclick="WinnerCheck">CheckForWinner</button>
+
 @code {
+    ConnectFourBoard Board;
+
     ConnectFourPlayer player = new("Test");
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Board = new();
+        Board.SetDiscAt(1, 1, 1);
+        Board.SetDiscAt(1, 2, 1);
+        Board.SetDiscAt(3, 0, 1);
+
+        Board.SetDiscAt(5, 1, 2);
+        Board.SetDiscAt(5, 2, 2);
+        Board.SetDiscAt(5, 3, 2);
+        Board.SetDiscAt(5, 4, 2);
+
+
+    }
+
+    public void NewGame()
+    {
+        Board.StartNewGame();
+        WinnerCheck();
+    }
+
+    public void WinnerCheck()
+    {
+        Board.CheckWinner();
+    }
 }
