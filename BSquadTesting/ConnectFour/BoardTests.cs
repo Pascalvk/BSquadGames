@@ -20,7 +20,9 @@ namespace BSquadTesting.ConnectFour
             board.SetDiscAt(0, 2, 1);
             board.SetDiscAt(0, 3, 1);
 
-            Assert.IsTrue(board.CheckWin(1));
+            board.CheckWinner();
+
+            Assert.IsTrue(board.GameWon);
         }
 
         [TestMethod]
@@ -33,7 +35,9 @@ namespace BSquadTesting.ConnectFour
             board.SetDiscAt(0, 2, 1);
             board.SetDiscAt(0, 3, 1);
 
-            Assert.IsFalse(board.CheckWin(1));
+            board.CheckWinner();
+
+            Assert.IsFalse(board.GameWon);
         }
 
         [TestMethod]
@@ -46,7 +50,9 @@ namespace BSquadTesting.ConnectFour
             board.SetDiscAt(2, 0, 1);
             board.SetDiscAt(3, 0, 1);
 
-            Assert.IsTrue(board.CheckWin(1));
+            board.CheckWinner();
+
+            Assert.IsTrue(board.GameWon);
         }
 
         [TestMethod]
@@ -59,7 +65,9 @@ namespace BSquadTesting.ConnectFour
             board.SetDiscAt(2, 0, 1);
             board.SetDiscAt(3, 0, 1);
 
-            Assert.IsFalse(board.CheckWin(1));
+            board.CheckWinner();
+
+            Assert.IsFalse(board.GameWon);
         }
 
         [TestMethod]
@@ -72,7 +80,9 @@ namespace BSquadTesting.ConnectFour
             board.SetDiscAt(2, 2, 1);
             board.SetDiscAt(3, 3, 1);
 
-            Assert.IsTrue(board.CheckWin(1));
+            board.CheckWinner();
+
+            Assert.IsTrue(board.GameWon);
         }
 
         [TestMethod]
@@ -85,7 +95,9 @@ namespace BSquadTesting.ConnectFour
             board.SetDiscAt(1, 2, 1);
             board.SetDiscAt(0, 3, 1);
 
-            Assert.IsTrue(board.CheckWin(1));
+            board.CheckWinner();
+
+            Assert.IsTrue(board.GameWon);
         }
 
         [TestMethod]
@@ -98,7 +110,9 @@ namespace BSquadTesting.ConnectFour
             board.SetDiscAt(2, 2, 1);
             board.SetDiscAt(3, 3, 1);
 
-            Assert.IsFalse(board.CheckWin(1));
+            board.CheckWinner();
+
+            Assert.IsFalse(board.GameWon);
         }
 
 
@@ -112,7 +126,9 @@ namespace BSquadTesting.ConnectFour
             board.SetDiscAt(0, 5, 1);
             board.SetDiscAt(0, 6, 1);
 
-            Assert.IsTrue(board.CheckWin(1));
+            board.CheckWinner();
+
+            Assert.IsTrue(board.GameWon);
         }
     }
 }

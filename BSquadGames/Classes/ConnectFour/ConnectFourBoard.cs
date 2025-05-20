@@ -43,8 +43,29 @@
                 }
             }
 
-            // Check diagonal
+            // Check diagonal left up \
+            for (int i = 0; i <= Rows - WinLenght; i++)
+            {
+                for (int j = 0; j <= Columns - WinLenght; j++)
+                {
+                    if (grid[i, j] == player && grid[i + 1, j + 1] == player && grid[i + 2, j + 2] == player && grid[i + 3, j + 3] == player)
+                    {
+                        return true;
+                    }
+                }
+            }
 
+            // Check diagonal richt up /
+            for (int i = 0; i <= Rows - WinLenght; i++)
+            {
+                for (int j = WinLenght - 1; j < Columns ; j++)
+                {
+                    if (grid[i, j] == player && grid[i + 1, j - 1] == player && grid[i + 2, j - 2] == player && grid[i + 3, j - 3] == player)
+                    {
+                        return true;
+                    }
+                }
+            }
 
             return false;
         }
