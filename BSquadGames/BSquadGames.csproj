@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="Components\Pages\Battleship\" />
     <Folder Include="wwwroot\Icons\" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
   </ItemGroup>
 
 </Project>

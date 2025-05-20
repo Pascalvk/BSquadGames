@@ -12,7 +12,10 @@
 <div class="connect-grid">
     @for (int row = 0; row < 6; row++){
         @for (int col = 0; col < 7; col++){
-            <div class="connect-square">
+
+            (int, int) id = (row, col);
+
+            <div class="connect-square" id="@id" @onmouseover="() => OnMouseOver(id)" @onclick="() => OnClick(id)">
                 @if(Board.grid[row, col] == 1){
                     <div>1</div>
                 }
@@ -31,15 +34,21 @@
 </div>
 <div></div>
 <div>@Board.GameWinner</div>
+<div>game is won: @Board.GameWon</div>
 <div></div>
 
 <button @onclick="NewGame">New Game!</button>
 <button @onclick="WinnerCheck">CheckForWinner</button>
 
+<div>@currentlyMouseOverSquare</div>
+
 @code {
     ConnectFourBoard Board;
+    (int, int) currentlyMouseOverSquare = (-1, -1);
+    int currentPlayer = 1;
 
     ConnectFourPlayer player = new("Test");
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -60,10 +69,30 @@
     {
         Board.StartNewGame();
         WinnerCheck();
+        currentPlayer = 1;
     }
 
     public void WinnerCheck()
     {
         Board.CheckWinner();
     }
+
+    public void OnMouseOver((int, int) id)
+    {
+        currentlyMouseOverSquare = id;
+    }
+    public void OnClick((int, int) id)
+    {
+        Board.SetDiscAt(id.Item1, id.Item2, currentPlayer);
+
+        if (currentPlayer == 1)
+        {
+            currentPlayer = 2;
+        }
+        else
+        {
+            currentPlayer = 1;
+        }
+    }
+
 }
