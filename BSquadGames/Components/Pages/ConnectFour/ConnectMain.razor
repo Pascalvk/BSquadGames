@@ -16,17 +16,31 @@
             (int, int) id = (row, col);
 
             bool isClickable = Board.DiscPlacement.Contains((row, col));
-        
-            <div class="connect-square" id="@id"
+
+            if (currentlyMouseOverSquare == id && currentPlayer == 1)
+            {
+                moveToSquare = "MoveToSquareRed";
+            }
+            else if (currentlyMouseOverSquare == id && currentPlayer == 2)
+            {
+                moveToSquare = "MoveToSquareBlue";
+            }
+            else{
+                moveToSquare = "";
+            }
+
+            <div 
+                class="connect-square" 
+                id="@id"
                 @onmouseover="() => OnMouseOver(id)"
                 @onclick="isClickable ? (() => OnClick(id)) : null">
                 @if(Board.grid[row, col] == 1)
                 {
-                    <div>1</div>
+                    <div class="Red">1</div>
                 }
                 else if(Board.grid[row, col] == 2)
                 {
-                    <div>2</div>
+                    <div class="Blue">2</div>
                 }
                 else if (Board.grid[row, col] == 0 && Board.DiscPlacement.Contains((row, col)))
                 { 
@@ -36,6 +50,7 @@
                 {
                     <div></div>
                 }
+                <div class="@moveToSquare"></div>
             </div>
 
         }
@@ -62,6 +77,8 @@
     int currentPlayer = 1;
 
     ConnectFourPlayer player = new("Test");
+
+    string moveToSquare = "";
 
     protected override void OnInitialized()
     {
