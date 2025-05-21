@@ -7,6 +7,7 @@
         const int WinLenght = 4;
         public bool GameWon = false;
         public int GameWinner;
+        public List<(int, int)> DiscPlacement = new();
 
         public int[,] grid;
 
@@ -72,7 +73,12 @@
 
         public void SetDiscAt(int row, int col, int player)
         {
-            grid[row, col] = player;
+            if (grid[row, col] == 0)
+            {
+                grid[row, col] = player;
+            }
+            
+            
         }
 
         public void StartNewGame()
@@ -97,6 +103,37 @@
                 GameWon = false;
                 GameWinner = 0;
             }
+        }
+
+
+        // Locates the squares where the player can place a disc.
+        public void GetListPossibleCellsToPlaceDiscAt()
+        {
+            DiscPlacement.Clear();
+            for(int i = 0; i < Rows; i++)
+            {
+                for(int j = 0; j < Columns; j++)
+                {
+                    
+                    if(i == 5)
+                    {
+                        if(grid[i, j] == 0)
+                        {
+                            DiscPlacement.Add((i, j));
+                        }
+                        
+                    }
+                    else
+                    {
+                        if (grid[i + 1, j] != 0 && grid[i, j] == 0)
+                        {
+                            DiscPlacement.Add((i, j));
+                        }
+                    }
+
+                }
+            }
+
         }
 
     }

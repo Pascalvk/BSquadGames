@@ -15,20 +15,30 @@
 
             (int, int) id = (row, col);
 
-            <div class="connect-square" id="@id" @onmouseover="() => OnMouseOver(id)" @onclick="() => OnClick(id)">
-                @if(Board.grid[row, col] == 1){
+            bool isClickable = Board.DiscPlacement.Contains((row, col));
+        
+            <div class="connect-square" id="@id"
+                @onmouseover="() => OnMouseOver(id)"
+                @onclick="isClickable ? (() => OnClick(id)) : null">
+                @if(Board.grid[row, col] == 1)
+                {
                     <div>1</div>
                 }
-                else if(Board.grid[row, col] == 2){
+                else if(Board.grid[row, col] == 2)
+                {
                     <div>2</div>
                 }
-                else{
-                    <div>Leeg</div>
+                else if (Board.grid[row, col] == 0 && Board.DiscPlacement.Contains((row, col)))
+                { 
+                    <div>Free</div>
                 }
-
+                else
+                {
+                    <div></div>
+                }
             </div>
-        }
 
+        }
     }
 
 </div>
@@ -41,6 +51,10 @@
 <button @onclick="WinnerCheck">CheckForWinner</button>
 
 <div>@currentlyMouseOverSquare</div>
+@foreach((int, int) freespots in Board.DiscPlacement){
+    <div>Freespot: @freespots</div>
+}
+
 
 @code {
     ConnectFourBoard Board;
@@ -70,6 +84,7 @@
         Board.StartNewGame();
         WinnerCheck();
         currentPlayer = 1;
+        Board.GetListPossibleCellsToPlaceDiscAt();
     }
 
     public void WinnerCheck()
@@ -81,18 +96,26 @@
     {
         currentlyMouseOverSquare = id;
     }
+
     public void OnClick((int, int) id)
     {
-        Board.SetDiscAt(id.Item1, id.Item2, currentPlayer);
+        if(Board.DiscPlacement.Contains((id.Item1, id.Item2)))
+        {
+            Board.SetDiscAt(id.Item1, id.Item2, currentPlayer);
 
-        if (currentPlayer == 1)
-        {
-            currentPlayer = 2;
+            if (currentPlayer == 1)
+            {
+                currentPlayer = 2;
+            }
+            else
+            {
+                currentPlayer = 1;
+            }
+
         }
-        else
-        {
-            currentPlayer = 1;
-        }
+        Board.GetListPossibleCellsToPlaceDiscAt();
+
+
     }
 
 }
