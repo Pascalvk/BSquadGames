@@ -15,8 +15,10 @@
 
             (int, int) id = (row, col);
 
+            // Check if the cell is a valid clickable position for a disc
             bool isClickable = Board.DiscPlacement.Contains((row, col));
 
+            // Highlight possible placement depending on current player
             if (currentlyMouseOverSquare == id && currentPlayer == 1)
             {
                 moveToSquare = "MoveToSquareRed";
@@ -29,11 +31,14 @@
                 moveToSquare = "";
             }
 
+            <!-- Render individual grid square -->
             <div 
                 class="connect-square" 
                 id="@id"
                 @onmouseover="() => OnMouseOver(id)"
                 @onclick="isClickable ? (() => OnClick(id)) : null">
+
+                <!-- Show the disc color or empty state -->
                 @if(Board.grid[row, col] == 1)
                 {
                     <div class="Red">1</div>
@@ -50,6 +55,7 @@
                 {
                     <div></div>
                 }
+                <!-- Visual hover indicator for the potential drop location -->
                 <div class="@moveToSquare"></div>
             </div>
 
@@ -57,6 +63,8 @@
     }
 
 </div>
+
+<!-- DEBUG INFORMATION -->
 <div></div>
 <div>@Board.GameWinner</div>
 <div>game is won: @Board.GameWon</div>
@@ -84,18 +92,9 @@
     {
         base.OnInitialized();
         Board = new();
-        Board.SetDiscAt(1, 1, 1);
-        Board.SetDiscAt(1, 2, 1);
-        Board.SetDiscAt(3, 0, 1);
-
-        Board.SetDiscAt(5, 1, 2);
-        Board.SetDiscAt(5, 2, 2);
-        Board.SetDiscAt(5, 3, 2);
-        Board.SetDiscAt(5, 4, 2);
-
-
     }
 
+    // Starts a new game: resets board and updates valid moves
     public void NewGame()
     {
         Board.StartNewGame();
@@ -104,22 +103,28 @@
         Board.GetListPossibleCellsToPlaceDiscAt();
     }
 
+    // Checks if there is a winner on the board
     public void WinnerCheck()
     {
         Board.CheckWinner();
     }
 
+
+    // Called when mouse hovers over a square
     public void OnMouseOver((int, int) id)
     {
         currentlyMouseOverSquare = id;
     }
 
+    // Handles clicking a valid cell to place a disc
     public void OnClick((int, int) id)
     {
         if(Board.DiscPlacement.Contains((id.Item1, id.Item2)))
         {
+            // Place disc for current player
             Board.SetDiscAt(id.Item1, id.Item2, currentPlayer);
 
+            // Switch to next player
             if (currentPlayer == 1)
             {
                 currentPlayer = 2;
@@ -130,6 +135,7 @@
             }
 
         }
+        // Update list of available placements
         Board.GetListPossibleCellsToPlaceDiscAt();
 
 

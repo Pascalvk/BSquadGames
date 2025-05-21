@@ -17,7 +17,13 @@
             grid = new int[Rows, Columns];
         }
 
-        // Check for 4 in a row, based on player number. empty = 0; player 1 = 1; player 2 = 2
+        /// <summary>
+        /// Checks if the given player has four discs in a row.
+        /// Returns true if the player has won; otherwise, false.
+        /// Values in the grid: 0 = empty, 1 = player 1, 2 = player 2
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns>bool</returns>
         private bool CheckWin(int player)
         {
             // Check horizontal
@@ -68,6 +74,7 @@
                 }
             }
 
+            // No winning pattern found
             return false;
         }
 
@@ -86,18 +93,25 @@
             grid = new int[Rows, Columns];
         }
 
+        /// <summary>
+        /// Checks if either player has won the game.
+        /// Updates the GameWon and GameWinner properties accordingly.
+        /// </summary>
         public void CheckWinner()
         {
+            // Check if player 1 has a winning combination
             if (CheckWin(1) == true)
             {
                 GameWon = true;
                 GameWinner = 1;
             }
+            // If not, check if player 2 has won
             else if (CheckWin(2) == true)
             {
                 GameWon = true;
                 GameWinner = 2;
             }
+            // If neither player has won, the game is still ongoing or a draw
             else
             {
                 GameWon = false;
@@ -106,27 +120,38 @@
         }
 
 
-        // Locates the squares where the player can place a disc.
+        /// <summary>
+        /// Determines all valid cells where a new disc can legally be placed,
+        /// following gravity rules in Connect Four.
+        /// </summary>
         public void GetListPossibleCellsToPlaceDiscAt()
         {
+            // Clear the current list of possible disc placements
             DiscPlacement.Clear();
-            for(int i = 0; i < Rows; i++)
+
+            // Loop through all rows and columns of the grid
+            for (int i = 0; i < Rows; i++)
             {
                 for(int j = 0; j < Columns; j++)
                 {
-                    
-                    if(i == 5)
+
+                    // Check if it's the bottom row (discs can always be placed there if empty)
+                    if (i == Rows - 1)
                     {
                         if(grid[i, j] == 0)
                         {
+                            // Add cell to list if it's empty
                             DiscPlacement.Add((i, j));
                         }
                         
                     }
                     else
                     {
+                        // Check if the cell below is filled and the current cell is empty
+                        // (This is where a disc would land)
                         if (grid[i + 1, j] != 0 && grid[i, j] == 0)
                         {
+                            // Add valid placement cell
                             DiscPlacement.Add((i, j));
                         }
                     }
