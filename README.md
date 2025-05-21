@@ -1,8 +1,7 @@
 # BSquadGames
-
-Common map within the "Classes" map is for all shared Classes between the games that are made on this application/site.
-
-
+Code written by Pascalvk & TheMumbleKing.  
+Some comments were generated with AI assistance to streamline the documentation process.  
+This project is intended for learning purposes only.
 
 # Connect Four Game - BSquadGames
 
@@ -39,6 +38,4 @@ The `BoardTests` class includes unit tests for:
 
 All tests use MSTest’s `Assert` methods. Run them via Visual Studio Test Explorer or CLI.
 
-Code written by Pascalvk & TheMumbleKing.  
-Some comments were generated with AI assistance to streamline the documentation process.  
-This project is intended for learning purposes only.
+
