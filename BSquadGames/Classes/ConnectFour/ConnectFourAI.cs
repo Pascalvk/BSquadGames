@@ -64,6 +64,7 @@ namespace BSquadGames.Classes.ConnectFour
             return bestMove;
         }
 
+        // Not writing this ever again lol ~Pascalvk
         public int MinMaxAlgorithm(ConnectFourGameManager copyManager, int currentPlayer, int alpha, int beta, int depth)
         {
             if (depth == 0 || copyManager.GameWon)

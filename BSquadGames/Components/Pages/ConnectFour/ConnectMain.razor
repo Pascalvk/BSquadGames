@@ -19,11 +19,11 @@
             bool isClickable = GameManager.ValidMoves.Contains((row, col));
 
             // Highlight possible placement depending on current player
-            if (currentlyMouseOverSquare == id && currentPlayer == 1)
+            if (currentlyMouseOverSquare == id && GameManager.CurrentPlayer == 1)
             {
                 moveToSquare = "MoveToSquareRed";
             }
-            else if (currentlyMouseOverSquare == id && currentPlayer == 2)
+            else if (currentlyMouseOverSquare == id && GameManager.CurrentPlayer == 2)
             {
                 moveToSquare = "MoveToSquareBlue";
             }
@@ -74,6 +74,9 @@
 <div></div>
 To Activate an AI ->
 <input type="checkbox" @bind="IsChecked" />
+<div></div>
+To Let AI start ->
+<input type="checkbox" @bind="AIStart" />
 
 <div>@currentlyMouseOverSquare</div>
 @foreach((int, int) freespots in GameManager.ValidMoves){
@@ -85,8 +88,9 @@ To Activate an AI ->
     ConnectFourGameManager GameManager;
     ConnectFourAI AIPlayer;
     private bool IsChecked = false;
+    private bool AIStart = false;
     (int, int) currentlyMouseOverSquare = (-1, -1);
-    int currentPlayer = 1;
+
 
     ConnectFourPlayer player = new("Test");
 
@@ -103,6 +107,12 @@ To Activate an AI ->
     public void NewGame()
     {
         GameManager.StartNewGame();
+
+        if(AIStart)
+        {
+            GameManager.CurrentPlayer = 2;
+            AIPlayer.MakeAnAIMove2();
+        }
     }
 
     // Called when mouse hovers over a square
