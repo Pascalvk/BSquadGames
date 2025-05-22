@@ -16,7 +16,7 @@
             (int, int) id = (row, col);
 
             // Check if the cell is a valid clickable position for a disc
-            bool isClickable = Board.DiscPlacement.Contains((row, col));
+            bool isClickable = GameManager.ValidMoves.Contains((row, col));
 
             // Highlight possible placement depending on current player
             if (currentlyMouseOverSquare == id && currentPlayer == 1)
@@ -33,21 +33,21 @@
 
             <!-- Render individual grid square -->
             <div 
-                class="connect-square" 
-                id="@id"
-                @onmouseover="() => OnMouseOver(id)"
-                @onclick="isClickable ? (() => OnClick(id)) : null">
+            class="connect-square" 
+            id="@id"
+            @onmouseover="() => OnMouseOver(id)"
+            @onclick="isClickable ? (() => OnClick(id)) : null">
 
                 <!-- Show the disc color or empty state -->
-                @if(Board.grid[row, col] == 1)
+                @if (GameManager.GetCellValue(row, col) == 1)
                 {
                     <div class="Red">1</div>
                 }
-                else if(Board.grid[row, col] == 2)
+                else if (GameManager.GetCellValue(row, col) == 2)
                 {
                     <div class="Blue">2</div>
                 }
-                else if (Board.grid[row, col] == 0 && Board.DiscPlacement.Contains((row, col)))
+                else if (GameManager.GetCellValue(row, col) == 0 && GameManager.ValidMoves.Contains((row, col)))
                 { 
                     <div>Free</div>
                 }
@@ -66,21 +66,21 @@
 
 <!-- DEBUG INFORMATION -->
 <div></div>
-<div>@Board.GameWinner</div>
-<div>game is won: @Board.GameWon</div>
+<div>@GameManager.GameWinner</div>
+<div>game is won: @GameManager.GameWon</div>
 <div></div>
 
 <button @onclick="NewGame">New Game!</button>
-<button @onclick="WinnerCheck">CheckForWinner</button>
 
 <div>@currentlyMouseOverSquare</div>
-@foreach((int, int) freespots in Board.DiscPlacement){
+@foreach((int, int) freespots in GameManager.ValidMoves){
     <div>Freespot: @freespots</div>
 }
 
 
 @code {
-    ConnectFourBoard Board;
+    ConnectFourGameManager GameManager;
+
     (int, int) currentlyMouseOverSquare = (-1, -1);
     int currentPlayer = 1;
 
@@ -91,24 +91,14 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Board = new();
+        GameManager = new();
     }
 
     // Starts a new game: resets board and updates valid moves
     public void NewGame()
     {
-        Board.StartNewGame();
-        WinnerCheck();
-        currentPlayer = 1;
-        Board.GetListPossibleCellsToPlaceDiscAt();
+        GameManager.StartNewGame();
     }
-
-    // Checks if there is a winner on the board
-    public void WinnerCheck()
-    {
-        Board.CheckWinner();
-    }
-
 
     // Called when mouse hovers over a square
     public void OnMouseOver((int, int) id)
@@ -119,28 +109,7 @@
     // Handles clicking a valid cell to place a disc
     public void OnClick((int, int) id)
     {
-        if(Board.DiscPlacement.Contains((id.Item1, id.Item2)))
-        {
-            // Place disc for current player
-            Board.SetDiscAt(id.Item1, id.Item2, currentPlayer);
-
-            // Switch to next player
-            if (currentPlayer == 1)
-            {
-                currentPlayer = 2;
-            }
-            else
-            {
-                currentPlayer = 1;
-            }
-
-        }
-
-        Board.CheckWinner();
-        // Update list of available placements
-        Board.GetListPossibleCellsToPlaceDiscAt();
-
-
+        GameManager.MakeMove(id);
     }
 
 }

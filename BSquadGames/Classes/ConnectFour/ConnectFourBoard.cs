@@ -88,7 +88,7 @@
             
         }
 
-        public void StartNewGame()
+        public void CreateNewBoard()
         {
             grid = new int[Rows, Columns];
         }
