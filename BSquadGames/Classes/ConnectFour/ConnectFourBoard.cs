@@ -9,12 +9,12 @@
         public int GameWinner;
         public List<(int, int)> DiscPlacement = new();
 
-        public int[,] grid;
+        public int[,] Grid;
 
         public ConnectFourBoard()
         {
             // Create 6x7 grid
-            grid = new int[Rows, Columns];
+            Grid = new int[Rows, Columns];
         }
 
         /// <summary>
@@ -31,7 +31,7 @@
             {
                 for (int j = 0; j <= Columns - WinLenght; j++)
                 {
-                    if (grid[i, j] == player && grid[i, j + 1] == player && grid[i, j + 2] == player && grid[i, j + 3] == player)
+                    if (Grid[i, j] == player && Grid[i, j + 1] == player && Grid[i, j + 2] == player && Grid[i, j + 3] == player)
                     {
                         return true;
                     }
@@ -43,7 +43,7 @@
             {
                 for (int j = 0; j < Columns; j++)
                 {
-                    if (grid[i, j] == player && grid[i + 1, j] == player && grid[i + 2, j] == player && grid[i + 3, j] == player)
+                    if (Grid[i, j] == player && Grid[i + 1, j] == player && Grid[i + 2, j] == player && Grid[i + 3, j] == player)
                     {
                         return true;
                     }
@@ -55,7 +55,7 @@
             {
                 for (int j = 0; j <= Columns - WinLenght; j++)
                 {
-                    if (grid[i, j] == player && grid[i + 1, j + 1] == player && grid[i + 2, j + 2] == player && grid[i + 3, j + 3] == player)
+                    if (Grid[i, j] == player && Grid[i + 1, j + 1] == player && Grid[i + 2, j + 2] == player && Grid[i + 3, j + 3] == player)
                     {
                         return true;
                     }
@@ -67,7 +67,7 @@
             {
                 for (int j = WinLenght - 1; j < Columns ; j++)
                 {
-                    if (grid[i, j] == player && grid[i + 1, j - 1] == player && grid[i + 2, j - 2] == player && grid[i + 3, j - 3] == player)
+                    if (Grid[i, j] == player && Grid[i + 1, j - 1] == player && Grid[i + 2, j - 2] == player && Grid[i + 3, j - 3] == player)
                     {
                         return true;
                     }
@@ -80,9 +80,9 @@
 
         public void SetDiscAt(int row, int col, int player)
         {
-            if (grid[row, col] == 0)
+            if (Grid[row, col] == 0)
             {
-                grid[row, col] = player;
+                Grid[row, col] = player;
             }
             
             
@@ -90,7 +90,7 @@
 
         public void CreateNewBoard()
         {
-            grid = new int[Rows, Columns];
+            Grid = new int[Rows, Columns];
         }
 
         /// <summary>
@@ -140,7 +140,7 @@
                     // Check if it's the bottom row (discs can always be placed there if empty)
                     if (i == Rows - 1)
                     {
-                        if(grid[i, j] == 0)
+                        if(Grid[i, j] == 0)
                         {
                             // Add cell to list if it's empty
                             DiscPlacement.Add((i, j));
@@ -151,7 +151,7 @@
                     {
                         // Check if the cell below is filled and the current cell is empty
                         // (This is where a disc would land)
-                        if (grid[i + 1, j] != 0 && grid[i, j] == 0)
+                        if (Grid[i + 1, j] != 0 && Grid[i, j] == 0)
                         {
                             // Add valid placement cell
                             DiscPlacement.Add((i, j));
@@ -161,6 +161,24 @@
                 }
             }
 
+        }
+
+        public ConnectFourBoard DeepCopy()
+        {
+            ConnectFourBoard copy = new ConnectFourBoard();
+            copy.GameWon = GameWon;
+            copy.GameWinner = GameWinner;
+            copy.Rows = Rows;
+            copy.Columns = Columns;
+
+            copy.Grid = new int[Rows, Columns];
+            for (int i = 0; i < Rows; i++)
+                for (int j = 0; j < Columns; j++)
+                    copy.Grid[i, j] = Grid[i, j];
+
+            copy.DiscPlacement = new List<(int, int)>(DiscPlacement);
+
+            return copy;
         }
 
     }
