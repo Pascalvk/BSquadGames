@@ -71,6 +71,9 @@
 <div></div>
 
 <button @onclick="NewGame">New Game!</button>
+<div></div>
+To Activate an AI ->
+<input type="checkbox" @bind="IsChecked" />
 
 <div>@currentlyMouseOverSquare</div>
 @foreach((int, int) freespots in GameManager.ValidMoves){
@@ -80,7 +83,8 @@
 
 @code {
     ConnectFourGameManager GameManager;
-
+    ConnectFourAI AIPlayer;
+    private bool IsChecked = false;
     (int, int) currentlyMouseOverSquare = (-1, -1);
     int currentPlayer = 1;
 
@@ -92,6 +96,7 @@
     {
         base.OnInitialized();
         GameManager = new();
+        AIPlayer = new(GameManager);
     }
 
     // Starts a new game: resets board and updates valid moves
@@ -110,6 +115,11 @@
     public void OnClick((int, int) id)
     {
         GameManager.MakeMove(id);
+
+        if(IsChecked)
+        {
+            AIPlayer.MakeAnAIMove();
+        }
     }
 
 }
