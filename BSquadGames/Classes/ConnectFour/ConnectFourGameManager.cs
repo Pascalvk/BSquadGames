@@ -1,35 +1,54 @@
-﻿namespace BSquadGames.Classes.ConnectFour
+﻿using BSquadGames.Classes.Common;
+
+namespace BSquadGames.Classes.ConnectFour
 {
     public class ConnectFourGameManager
     {
         
         private ConnectFourBoard ConnectFourBoard;
+        private ConnectFourAI ConnectFourAI;
 
         public int GameWinner => ConnectFourBoard.GameWinner;
         public bool GameWon => ConnectFourBoard.GameWon;
         public int[,] Grid => ConnectFourBoard.Grid;
         public List<(int, int)> ValidMoves => ConnectFourBoard.DiscPlacement;
 
+        public bool IsAIActive = false;
+        public bool IsAIStartActive = false;
+
         public int CurrentPlayer { get; set; }
 
         public ConnectFourGameManager() 
         {
             ConnectFourBoard = new ConnectFourBoard();
+            ConnectFourAI = new ConnectFourAI(this);
             CurrentPlayer = 1;
-
 
         }
 
         public void StartNewGame()
         {
+                     
             ConnectFourBoard.CreateNewBoard();
             ConnectFourBoard.CheckWinner();
-            CurrentPlayer = 1;
             ConnectFourBoard.GetListPossibleCellsToPlaceDiscAt();
+
+            if (IsAIStartActive)
+            {
+                CurrentPlayer = 2;
+                MakeAIMove();
+            }
+            else
+            {
+                CurrentPlayer = 1;
+            }
+
+
         }
 
         public void MakeMove((int, int) clickCords)
         {
+                               
             if (ConnectFourBoard.DiscPlacement.Contains((clickCords.Item1, clickCords.Item2)))
             {
                 // Place disc for current player
@@ -49,9 +68,19 @@
 
             }
 
-
             // Update list of available placements
             ConnectFourBoard.GetListPossibleCellsToPlaceDiscAt();
+        }
+
+        public void MakeAIMove()
+        {
+            
+            (int, int) bestMove = ConnectFourAI.FindBestMove();
+            
+            if (IsAIActive)
+            {
+                MakeMove(bestMove);
+            }
         }
 
         public int GetCellValue(int row, int col)

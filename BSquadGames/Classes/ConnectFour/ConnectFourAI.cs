@@ -52,7 +52,7 @@ namespace BSquadGames.Classes.ConnectFour
                 ConnectFourGameManager copy = GameManager.DeepCopyManager();
                 copy.MakeMove(move);
 
-                int score = MinMaxAlgorithm(copy, 1, alpha, beta, 4);
+                int score = MinMaxAlgorithm(copy, 1, alpha, beta, 2);
 
                 if (score > bestScore)
                 {
