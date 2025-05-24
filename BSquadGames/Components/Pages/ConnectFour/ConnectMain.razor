@@ -1,4 +1,5 @@
-﻿@using BSquadGames.Classes.ConnectFour
+﻿@using BSquadGames.Classes.Common
+@using BSquadGames.Classes.ConnectFour
 @page "/connectMain"
 @rendermode InteractiveServer
 
@@ -68,8 +69,11 @@
 <div></div>
 <div>@GameManager.GameWinner</div>
 <div>game is won: @GameManager.GameWon</div>
-<div></div>
-
+<div>
+    @* needs to call on Checkwinner() *@
+    <p> Player 1 Score: @GameManager.player1</p>
+    <p>Player 2 Score: @GameManager.player2</p>
+</div>
 <button @onclick="NewGame">New Game!</button>
 <div></div>
 To Activate an AI ->
@@ -136,7 +140,20 @@ To Let AI start ->
             
         }
 
-       
+    }
+
+    public void UpdateScore(int playerId, int score)
+    {
+        if (playerId == 1)
+        {
+            //needs to call on Checkwinner()
+            GameManager.player1.Score = score;
+        }
+        else if (playerId == 2)
+        {
+            //needs to call on Checkwinner()
+            GameManager.player2.Score = score;
+        }
     }
 
 }

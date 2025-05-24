@@ -1,4 +1,6 @@
-﻿namespace BSquadGames.Classes.ConnectFour
+﻿using BSquadGames.Classes.Common;
+
+namespace BSquadGames.Classes.ConnectFour
 {
     public class ConnectFourBoard
     {
@@ -24,7 +26,7 @@
         /// </summary>
         /// <param name="player"></param>
         /// <returns>bool</returns>
-        private bool CheckWin(int player)
+        public bool CheckWin(int player)
         {
             // Check horizontal
             for (int i = 0; i < Rows; i++)
@@ -104,12 +106,16 @@
             {
                 GameWon = true;
                 GameWinner = 1;
+                Player.player1Score++;
+
             }
             // If not, check if player 2 has won
             else if (CheckWin(2) == true)
             {
                 GameWon = true;
                 GameWinner = 2;
+                Player.player2Score++;
+                
             }
             // If neither player has won, the game is still ongoing or a draw
             else

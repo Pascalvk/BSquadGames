@@ -12,6 +12,8 @@ namespace BSquadGames.Classes.ConnectFour
         public bool GameWon => ConnectFourBoard.GameWon;
         public int[,] Grid => ConnectFourBoard.Grid;
         public List<(int, int)> ValidMoves => ConnectFourBoard.DiscPlacement;
+        public Player player1;
+        public Player player2;
 
         public bool IsAIActive = false;
         public bool IsAIStartActive = false;
@@ -20,10 +22,11 @@ namespace BSquadGames.Classes.ConnectFour
 
         public ConnectFourGameManager() 
         {
+             
             ConnectFourBoard = new ConnectFourBoard();
             ConnectFourAI = new ConnectFourAI(this);
             CurrentPlayer = 1;
-
+            
         }
 
         public void StartNewGame()
