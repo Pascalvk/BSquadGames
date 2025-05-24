@@ -7,8 +7,6 @@ namespace BSquadGames.Classes.ConnectFour
         public int Rows = 6;
         public int Columns = 7;
         const int WinLenght = 4;
-        public bool GameWon = false;
-        public int GameWinner;
         public List<(int, int)> DiscPlacement = new();
 
         public int[,] Grid;
@@ -95,38 +93,6 @@ namespace BSquadGames.Classes.ConnectFour
             Grid = new int[Rows, Columns];
         }
 
-        /// <summary>
-        /// Checks if either player has won the game.
-        /// Updates the GameWon and GameWinner properties accordingly.
-        /// </summary>
-        public void CheckWinner()
-        {
-            // Check if player 1 has a winning combination
-            if (CheckWin(1) == true)
-            {
-                GameWon = true;
-                GameWinner = 1;
-                Player.player1Score++;
-
-            }
-            // If not, check if player 2 has won
-            else if (CheckWin(2) == true)
-            {
-                GameWon = true;
-                GameWinner = 2;
-                Player.player2Score++;
-                
-            }
-            // If neither player has won, the game is still ongoing or a draw
-            else
-            {
-                GameWon = false;
-                GameWinner = 0;
-
-            }
-            
-        }
-
 
         /// <summary>
         /// Determines all valid cells where a new disc can legally be placed,
@@ -172,8 +138,6 @@ namespace BSquadGames.Classes.ConnectFour
         public ConnectFourBoard DeepCopy()
         {
             ConnectFourBoard copy = new ConnectFourBoard();
-            copy.GameWon = GameWon;
-            copy.GameWinner = GameWinner;
             copy.Rows = Rows;
             copy.Columns = Columns;
 

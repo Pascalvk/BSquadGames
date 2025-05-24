@@ -8,8 +8,8 @@ namespace BSquadGames.Classes.ConnectFour
         private ConnectFourBoard ConnectFourBoard;
         private ConnectFourAI ConnectFourAI;
 
-        public int GameWinner => ConnectFourBoard.GameWinner;
-        public bool GameWon => ConnectFourBoard.GameWon;
+        public bool GameWon = false;
+        public int GameWinner;
         public int[,] Grid => ConnectFourBoard.Grid;
         public List<(int, int)> ValidMoves => ConnectFourBoard.DiscPlacement;
         public Player player1;
@@ -33,7 +33,7 @@ namespace BSquadGames.Classes.ConnectFour
         {
                      
             ConnectFourBoard.CreateNewBoard();
-            ConnectFourBoard.CheckWinner();
+            CheckWinner();
             ConnectFourBoard.GetListPossibleCellsToPlaceDiscAt();
 
             if (IsAIStartActive)
@@ -57,7 +57,7 @@ namespace BSquadGames.Classes.ConnectFour
                 // Place disc for current player
                 ConnectFourBoard.SetDiscAt(clickCords.Item1, clickCords.Item2, CurrentPlayer);
 
-                ConnectFourBoard.CheckWinner();
+                CheckWinner();
 
                 // Switch to next player
                 if (CurrentPlayer == 1)
@@ -73,6 +73,39 @@ namespace BSquadGames.Classes.ConnectFour
 
             // Update list of available placements
             ConnectFourBoard.GetListPossibleCellsToPlaceDiscAt();
+        }
+
+
+        /// <summary>
+        /// Checks if either player has won the game.
+        /// Updates the GameWon and GameWinner properties accordingly.
+        /// </summary>
+        public void CheckWinner()
+        {
+            // Check if player 1 has a winning combination
+            if (ConnectFourBoard.CheckWin(1) == true)
+            {
+                GameWon = true;
+                GameWinner = 1;
+                Player.player1Score++;
+
+            }
+            // If not, check if player 2 has won
+            else if (ConnectFourBoard.CheckWin(2) == true)
+            {
+                GameWon = true;
+                GameWinner = 2;
+                Player.player2Score++;
+
+            }
+            // If neither player has won, the game is still ongoing or a draw
+            else
+            {
+                GameWon = false;
+                GameWinner = 0;
+
+            }
+
         }
 
         public void MakeAIMove()
