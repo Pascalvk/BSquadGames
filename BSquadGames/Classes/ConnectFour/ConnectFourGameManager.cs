@@ -5,7 +5,7 @@ namespace BSquadGames.Classes.ConnectFour
     public class ConnectFourGameManager
     {
         
-        private ConnectFourBoard ConnectFourBoard;
+        public ConnectFourBoard ConnectFourBoard;
         private ConnectFourAI ConnectFourAI;
 
         public bool GameWon = false;

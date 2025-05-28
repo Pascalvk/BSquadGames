@@ -1,6 +1,11 @@
 ﻿@using BSquadGames.Classes.Common
 @using BSquadGames.Classes.ConnectFour
-@page "/connectMain"
+@using BSquadGames.Services
+
+@inject ConnectFourGameServices ConnectFourGameServices
+@inject NavigationManager Navigation
+
+@page "/connectMain/{GameID}"
 @rendermode InteractiveServer
 
 <link href="CSS/ConnectFourCSS.css" rel="stylesheet">
@@ -75,6 +80,7 @@
     <p>Player 2 Score: @GameManager.player2</p>
 </div>
 <button @onclick="NewGame">New Game!</button>
+<button @onclick="BackToLobby">Back to lobby</button>
 <div></div>
 To Activate an AI ->
 <input type="checkbox" @bind="IsChecked" />
@@ -99,10 +105,23 @@ To Let AI start ->
 
     string moveToSquare = "";
 
+
+    [Parameter] public string GameID { get; set; }
+    private ConnectFourGame? game;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        GameManager = new();
+        game = ConnectFourGameServices.GetGame(GameID);
+
+        if (game is null)
+        {
+            return;
+        }
+
+        GameManager = game.Manager;
+        //GameManager.StartNewGame();
+    
     }
 
     // Starts a new game: resets board and updates valid moves
@@ -140,6 +159,11 @@ To Let AI start ->
             
         }
 
+    }
+
+    public void BackToLobby()
+    {
+        Navigation.NavigateTo($"/lobby/{game.LobbyID}");
     }
 
     public void UpdateScore(int playerId, int score)

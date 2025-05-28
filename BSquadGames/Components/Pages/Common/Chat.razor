@@ -1,0 +1,80 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@using BSquadGames.Classes.Common
+@using BSquadGames.Classes.ConnectFour
+@using BSquadGames.Services
+@using Microsoft.AspNetCore.SignalR.Client
+
+@inject NavigationManager NavigationManager
+@inject PlayerStateServices PlayerStateServices
+
+@page "/chat"
+@rendermode InteractiveServer
+
+<h3>Chat Application</h3>
+
+<div>
+    <input @bind="MessageInput" placeholder="Enter your message" @onkeypress="SendOnEnter" />
+    <button @onclick="SendMessage">Send</button>
+</div>
+
+<div style="margin-top: 20px;">
+    <h4>Messages:</h4>
+    <ul>
+        @foreach (var message in Messages)
+        {
+            <li>@message</li>
+        }
+    </ul>
+</div>
+
+@code {
+    private HubConnection? hubConnection;
+    private string? UserName;
+    private string? MessageInput;
+    private List<string> Messages = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initialize SignalR connection
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .Build();
+
+        // Listen to incoming messages
+        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            Messages.Add($"{user}: {message}");
+            InvokeAsync(StateHasChanged);
+        });
+
+        // Start connection
+        await hubConnection.StartAsync();
+
+        UserName = PlayerStateServices.Player.Name;
+    }
+
+    private async Task SendMessage()
+    {
+        if (!string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(MessageInput) && hubConnection is not null)
+        {
+            await hubConnection.SendAsync("SendMessage", UserName, MessageInput);
+            MessageInput = string.Empty;
+        }
+    }
+
+    private async Task SendOnEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SendMessage();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

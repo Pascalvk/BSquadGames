@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="Components\Pages\Battleship\" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.5" />
   </ItemGroup>
 
 </Project>
