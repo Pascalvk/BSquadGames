@@ -75,9 +75,8 @@
 <div>@GameManager.GameWinner</div>
 <div>game is won: @GameManager.GameWon</div>
 <div>
-    @* needs to call on Checkwinner() *@
-    <p> Player 1 Score: @GameManager.player1</p>
-    <p>Player 2 Score: @GameManager.player2</p>
+    <p>Player 1 Score: @GameManager.player1 @Player.player1Score</p>
+    <p>Player 2 Score: @GameManager.player2 @Player.player2Score</p>
 </div>
 <button @onclick="NewGame">New Game!</button>
 <button @onclick="BackToLobby">Back to lobby</button>
@@ -121,7 +120,7 @@ To Let AI start ->
 
         GameManager = game.Manager;
         //GameManager.StartNewGame();
-    
+
     }
 
     // Starts a new game: resets board and updates valid moves
@@ -156,7 +155,7 @@ To Let AI start ->
         else
         {
             GameManager.IsAIActive = false;
-            
+
         }
 
     }
@@ -170,12 +169,12 @@ To Let AI start ->
     {
         if (playerId == 1)
         {
-            //needs to call on Checkwinner()
+            GameManager.CheckWinner();
             GameManager.player1.Score = score;
         }
         else if (playerId == 2)
         {
-            //needs to call on Checkwinner()
+            GameManager.CheckWinner();
             GameManager.player2.Score = score;
         }
     }
