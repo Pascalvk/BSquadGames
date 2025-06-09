@@ -25,8 +25,8 @@ namespace BSquadGames.Classes.ConnectFour
             ConnectFourBoard = new ConnectFourBoard();
             ConnectFourAI = new ConnectFourAI(this);
             CurrentPlayer = 1;
-            Player Player1 = player1;
-            Player Player2 = player2;
+            Player1 = player1;
+            Player2 = player2;
         }
 
         public void StartNewGame()
