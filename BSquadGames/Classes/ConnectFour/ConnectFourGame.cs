@@ -15,7 +15,7 @@ namespace BSquadGames.Classes.ConnectFour
             LobbyID = lobbyID;
             Player1 = player1;
             Player2 = player2;
-            Manager = new();
+            Manager = new(player1, player2);
 
             GameID = Guid.NewGuid().ToString();
         }

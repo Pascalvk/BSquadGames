@@ -12,21 +12,21 @@ namespace BSquadGames.Classes.ConnectFour
         public int GameWinner;
         public int[,] Grid => ConnectFourBoard.Grid;
         public List<(int, int)> ValidMoves => ConnectFourBoard.DiscPlacement;
-        public Player player1;
-        public Player player2;
+        public Player Player1;
+        public Player Player2;
 
         public bool IsAIActive = false;
         public bool IsAIStartActive = false;
 
         public int CurrentPlayer { get; set; }
 
-        public ConnectFourGameManager() 
+        public ConnectFourGameManager(Player player1, Player player2) 
         {
-             
             ConnectFourBoard = new ConnectFourBoard();
             ConnectFourAI = new ConnectFourAI(this);
             CurrentPlayer = 1;
-            
+            Player Player1 = player1;
+            Player Player2 = player2;
         }
 
         public void StartNewGame()
@@ -87,7 +87,7 @@ namespace BSquadGames.Classes.ConnectFour
             {
                 GameWon = true;
                 GameWinner = 1;
-                Player.player1Score++;
+                Player1.Score++;
 
             }
             // If not, check if player 2 has won
@@ -95,7 +95,7 @@ namespace BSquadGames.Classes.ConnectFour
             {
                 GameWon = true;
                 GameWinner = 2;
-                Player.player2Score++;
+                Player2.Score++;
 
             }
             // If neither player has won, the game is still ongoing or a draw
@@ -126,7 +126,7 @@ namespace BSquadGames.Classes.ConnectFour
 
         public ConnectFourGameManager DeepCopyManager()
         {
-            ConnectFourGameManager copy = new ConnectFourGameManager();
+            ConnectFourGameManager copy = new ConnectFourGameManager(Player1, Player2);
 
             copy.CurrentPlayer = CurrentPlayer;
 

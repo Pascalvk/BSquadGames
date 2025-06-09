@@ -75,8 +75,8 @@
 <div>@GameManager.GameWinner</div>
 <div>game is won: @GameManager.GameWon</div>
 <div>
-    <p>Player 1 Score: @GameManager.player1 @Player.player1Score</p>
-    <p>Player 2 Score: @GameManager.player2 @Player.player2Score</p>
+    <p>Player 1 Score: @GameManager.Player1 @GameManager.Player1.Score</p>
+    <p>Player 2 Score: @GameManager.Player2 @GameManager.Player2.Score</p>
 </div>
 <button @onclick="NewGame">New Game!</button>
 <button @onclick="BackToLobby">Back to lobby</button>
@@ -165,18 +165,18 @@ To Let AI start ->
         Navigation.NavigateTo($"/lobby/{game.LobbyID}");
     }
 
-    public void UpdateScore(int playerId, int score)
-    {
-        if (playerId == 1)
-        {
-            GameManager.CheckWinner();
-            GameManager.player1.Score = score;
-        }
-        else if (playerId == 2)
-        {
-            GameManager.CheckWinner();
-            GameManager.player2.Score = score;
-        }
-    }
+    // public void UpdateScore(int playerId, int score)
+    // {
+    //     if (playerId == 1)
+    //     {
+    //         GameManager.CheckWinner();
+    //         GameManager.Player1.Score = score;
+    //     }
+    //     else if (playerId == 2)
+    //     {
+    //         GameManager.CheckWinner();
+    //         GameManager.Player2.Score = score;
+    //     }
+    // }
 
 }
