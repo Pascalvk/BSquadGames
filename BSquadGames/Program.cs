@@ -1,4 +1,6 @@
+using BSquadGames.Classes.Common;
 using BSquadGames.Components;
+using BSquadGames.Services;
 
 namespace BSquadGames
 {
@@ -11,6 +13,11 @@ namespace BSquadGames
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+
+            builder.Services.AddSignalR();
+            builder.Services.AddSingleton<ConnectFourGameServices>();
+            builder.Services.AddSingleton<LobbyServices>();
+            builder.Services.AddScoped<PlayerStateServices>();
 
             var app = builder.Build();
 
@@ -29,6 +36,9 @@ namespace BSquadGames
             app.MapStaticAssets();
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode();
+
+            app.MapHub<ChatHub>("/chathub");
+            app.MapHub<LobbyHub>("/lobbyhub");
 
             app.Run();
         }

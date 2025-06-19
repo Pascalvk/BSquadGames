@@ -1,0 +1,220 @@
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Microsoft.AspNetCore.SignalR.Client
+@using BSquadGames.Classes.Common
+@using BSquadGames.Classes.ConnectFour
+@using BSquadGames.Services
+
+@inject NavigationManager NavigationManager
+@inject ConnectFourGameServices ConnectFourGameServices
+@inject LobbyServices LobbyServices
+@inject PlayerStateServices PlayerStateServices
+@inject ProtectedLocalStorage localStorage
+
+@implements IDisposable
+
+@page "/lobby/{LobbyID}"
+@rendermode InteractiveServer
+
+<BSquadGames.Components.Pages.Common.CentralGameHub></BSquadGames.Components.Pages.Common.CentralGameHub>
+
+<h3>Lobby</h3>
+<div> CurrentLobby = @lobbyID</div>
+@if(player != null)
+{
+    <div>
+        player: @player.Name
+    </div>
+}
+
+
+@if(lobby != null)
+{
+    <div>Players in lobby:</div>
+    <ul>
+        @foreach(Player player in lobby.Players)
+        {
+            <li>@player.Name @(" ") @player.ID</li>
+        }
+    </ul>
+
+}
+
+
+<button @onclick="OnStartClickBot">Start a Bot game</button>
+<button @onclick="OnStartClickMultiplayer">Start a Online game!</button>
+<button @onclick="OnStartClickHotSeat">Start a HotSeat game!</button>
+<button @onclick="OnLeaveLobbyClick">Leave lobby</button>
+<button @onclick="OnRefresh">Refresh </button>
+
+<h2>Available Games</h2>
+
+@if (games == null || games.Count == 0)
+{
+    <p>No active lobbies.</p>
+}
+else
+{
+    <ul>
+        @foreach (var game in games)
+        {
+            @if(game.LobbyID == lobbyID)
+            {
+                <li>
+                    <strong>@game.Player1.Name</strong> vs <strong>@("...")</strong>
+                    [<code>@game.GameID</code>]
+                    <button @onclick="() => JoinGame(game.GameID)">Join</button>
+                </li>
+            }
+
+        }
+    </ul>
+}
+
+
+@if(player != null)
+{
+    <BSquadGames.Components.Pages.Common.Chat></BSquadGames.Components.Pages.Common.Chat>
+}
+
+
+@code {
+    Player player;
+    private List<ConnectFourGame> games;
+    string lobbyID = "";
+
+    [Parameter] public string LobbyID { get; set; }
+    private Lobby? lobby;
+
+    private bool initialized = false;
+    private HubConnection hubConnection;
+
+    private bool _disposed = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        lobby = LobbyServices.GetLobby(LobbyID);
+        if (lobby is null)
+        {
+            return;
+        }
+
+        games = ConnectFourGameServices.GetAllGames();
+        lobbyID = lobby.LobbyID;
+
+        player = PlayerStateServices.Player;
+
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/lobbyhub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+
+        hubConnection.On("LobbyUpdate", async () =>
+            {
+                await OnRefresh();
+            });
+
+        await hubConnection.StartAsync();
+        await hubConnection.InvokeAsync("JoinLobbyGroup", LobbyID);
+        base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+
+        var result = await localStorage.GetAsync<Player>("player");
+        if (result.Success && result.Value != null)
+        {
+            PlayerStateServices.Player = result.Value;
+            player = result.Value;
+            StateHasChanged(); 
+        }
+
+
+    }
+
+    public async Task OnStartClickBot()
+    {
+        Player playerBot = new("AI_BOT_DONT_CHANGE_THIS_NAME");
+        ConnectFourGame game = ConnectFourGameServices.CreateGame(lobbyID, player, playerBot);
+        await LobbyServices.StartGame(lobby.LobbyID);
+        await hubConnection.SendAsync("LobbyUpdate", lobby.LobbyID);
+        NavigationManager.NavigateTo($"/connectMain/{game.GameID}");
+    }
+
+    public async Task OnStartClickMultiplayer()
+    {
+        if(lobby != null)
+        {
+            if (lobby.Players.Count() >= 2)
+            {
+                ConnectFourGame game = ConnectFourGameServices.CreateGame(lobbyID, lobby.Players[0], lobby.Players[1]);
+                await LobbyServices.StartGame(lobby.LobbyID);
+                await hubConnection.SendAsync("LobbyUpdate", lobby.LobbyID);
+                NavigationManager.NavigateTo($"/connectMain/{game.GameID}");
+            }
+
+        }
+    }
+
+    public async Task OnStartClickHotSeat()
+    {
+        Player HotSeatPlayer = new("HotSeatPlayer");
+        ConnectFourGame game = ConnectFourGameServices.CreateGame(lobbyID, lobby.Players[0], HotSeatPlayer);
+        await LobbyServices.StartGame(lobby.LobbyID);
+        await hubConnection.SendAsync("LobbyUpdate", lobby.LobbyID);
+        NavigationManager.NavigateTo($"/connectMain/{game.GameID}");
+    }
+
+    public async Task OnRefresh()
+    {
+        if (_disposed)
+            return;
+
+        var currentLobby = LobbyServices.GetLobby(LobbyID);
+
+        if (currentLobby == null)
+        {
+            NavigationManager.NavigateTo("/hub");
+        }
+        else
+        {
+            lobby = currentLobby;
+            games = ConnectFourGameServices.GetAllGames();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+
+    public async Task OnLeaveLobbyClick()
+    {
+        bool success = await LobbyServices.LeaveLobbyAsync(lobby.LobbyID, player.ID);
+
+        if (success)
+        {
+            await hubConnection.InvokeAsync("LeaveLobbyGroup", lobbyID);
+            NavigationManager.NavigateTo("/hub");
+        }
+        else
+        {
+            // give error on client page
+        }
+    }
+
+    private void JoinGame(string gameID)
+    {
+        NavigationManager.NavigateTo($"/connectMain/{gameID}");
+    }
+
+    public void Dispose()
+    {
+        _disposed = true;
+        if (hubConnection != null)
+        {
+            _ = hubConnection.DisposeAsync();
+        }
+    }
+}

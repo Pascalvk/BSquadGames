@@ -1,0 +1,195 @@
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Microsoft.AspNetCore.SignalR.Client
+@using BSquadGames.Classes.Common
+@using BSquadGames.Classes.ConnectFour
+@using BSquadGames.Services
+
+@inject NavigationManager NavigationManager
+@inject ConnectFourGameServices ConnectFourGameServices
+@inject LobbyServices LobbyServices
+@inject PlayerStateServices PlayerStateServices
+@inject ProtectedLocalStorage localStorage
+
+
+@page "/hub"
+@rendermode InteractiveServer
+
+@if (PlayerStateServices.Player == null)
+{
+    <div>
+        <input @bind="UserName" placeholder="Enter your name" />
+        <button @onclick="Submit">Send</button>
+    </div>
+}
+else
+{
+    <div>
+        <p>Welcome, @PlayerStateServices.Player.Name!</p>
+        <button @onclick="Logout">Logout</button>
+    </div>
+}
+
+
+@if (PlayerStateServices.Player != null)
+{
+    <h2>Available Lobbies</h2>
+
+    @if (lobbies == null || lobbies.Count == 0)
+    {
+        <p>No active lobbies.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var lobby in lobbies)
+            {
+                // Skip if current player is already in the lobby
+                if (!lobby.Players.Any(p => p.ID == PlayerStateServices.Player.ID))
+                {
+                    <li>
+                        <strong>
+                            @foreach (var player in lobby.Players)
+                            {
+                                @player.Name
+                                @(", ")
+                            }
+                        </strong>
+                        [<code>@lobby.LobbyID</code>]
+                        <button @onclick="() => JoinLobby(lobby.LobbyID)">Join</button>
+                    </li>
+                }
+            }
+        </ul>
+    }
+
+    <button @onclick="CreateNewLobby">Create new lobby</button>
+}
+
+
+@if(PlayerStateServices.Player != null)
+{
+    <div>Playerstate debug: @PlayerStateServices.Player.Name</div>
+}
+
+@code {
+    private List<Lobby> lobbies;
+    private string? UserName;
+    Player player;
+
+    private bool initialized = false;
+    private HubConnection? hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initialize SignalR connection
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/lobbyhub"))
+            .WithAutomaticReconnect()
+            .Build();
+        
+        hubConnection.On("LobbyUpdate", () =>
+        {
+            LoadLobbies();
+            InvokeAsync(StateHasChanged);
+        });
+        
+        await hubConnection.StartAsync();
+        base.OnInitialized();
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var result = await localStorage.GetAsync<Player>("player");
+        if (result.Success && result.Value != null)
+        {
+            PlayerStateServices.Player = result.Value;
+            player = result.Value;
+            LoadLobbies();
+            StateHasChanged();
+        }
+    }
+
+    public async Task Submit()
+    {
+        if (!string.IsNullOrEmpty(UserName))
+        {
+            player = new(UserName);
+            PlayerStateServices.Player = player;
+            LoadLobbies();
+
+            await localStorage.SetAsync("player", player);
+        }
+    }
+
+    private void LoadLobbies()
+    {
+        lobbies = LobbyServices.GetAllLobbies();
+    }
+
+    private async Task CreateNewLobby()
+    {
+        Lobby currentLobby = LobbyServices.GetLobbyForPlayer(player.ID);
+        
+        // If somehow you already are in a lobby.
+        if (currentLobby != null)
+        {
+            if(await LobbyServices.LeaveLobbyAsync(currentLobby.LobbyID, player.ID))
+            {
+                await hubConnection.InvokeAsync("LeaveLobbyGroup", currentLobby.LobbyID);
+            }
+            else
+            {
+                // error
+            }
+
+        }
+       
+        Lobby lobby = LobbyServices.CreateLobby(player.ID, player, 3);
+
+        if (lobby != null)
+        {
+            await hubConnection.InvokeAsync("JoinLobbyGroup", lobby.LobbyID);
+            await hubConnection.SendAsync("LobbyUpdate", lobby.LobbyID);
+            NavigationManager.NavigateTo($"/lobby/{lobby.LobbyID}");
+        }
+        else
+        {
+            // give error
+        }
+    }
+
+    private async Task JoinLobby(string lobbyID)
+    {
+        Lobby currentLobby = LobbyServices.GetLobbyForPlayer(player.ID);
+        if (currentLobby != null && currentLobby.LobbyID != lobbyID)
+        {
+            if (!await LobbyServices.LeaveLobbyAsync(currentLobby.LobbyID, player.ID))
+            {
+                // error not succeeded
+            }
+        }
+        if (await LobbyServices.JoinLobbyAsync(lobbyID, player))
+        {
+            await hubConnection.InvokeAsync("JoinLobbyGroup", lobbyID);
+            await hubConnection.SendAsync("LobbyUpdate", lobbyID);
+            NavigationManager.NavigateTo($"/lobby/{lobbyID}");
+        }
+        else
+        {
+            // Get an error
+        }
+
+    }
+
+    private async Task Logout()
+    {
+        PlayerStateServices.Player = null;
+        player = null;
+
+        await localStorage.DeleteAsync("player");
+        NavigationManager.NavigateTo("/hub");
+
+        StateHasChanged();
+    }
+}
