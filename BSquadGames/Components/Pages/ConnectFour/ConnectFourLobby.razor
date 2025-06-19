@@ -42,6 +42,7 @@
 
 <button @onclick="OnStartClickBot">Start a Bot game</button>
 <button @onclick="OnStartClickMultiplayer">Start a Online game!</button>
+<button @onclick="OnStartClickHotSeat">Start a HotSeat game!</button>
 <button @onclick="OnLeaveLobbyClick">Leave lobby</button>
 <button @onclick="OnRefresh">Refresh </button>
 
@@ -135,23 +136,37 @@ else
 
     }
 
-    public void OnStartClickBot()
+    public async Task OnStartClickBot()
     {
-        ConnectFourGame game = ConnectFourGameServices.CreateGame(lobbyID, player, player);
+        Player playerBot = new("AI_BOT_DONT_CHANGE_THIS_NAME");
+        ConnectFourGame game = ConnectFourGameServices.CreateGame(lobbyID, player, playerBot);
+        await LobbyServices.StartGame(lobby.LobbyID);
+        await hubConnection.SendAsync("LobbyUpdate", lobby.LobbyID);
         NavigationManager.NavigateTo($"/connectMain/{game.GameID}");
     }
 
-    public void OnStartClickMultiplayer()
+    public async Task OnStartClickMultiplayer()
     {
         if(lobby != null)
         {
             if (lobby.Players.Count() >= 2)
             {
                 ConnectFourGame game = ConnectFourGameServices.CreateGame(lobbyID, lobby.Players[0], lobby.Players[1]);
+                await LobbyServices.StartGame(lobby.LobbyID);
+                await hubConnection.SendAsync("LobbyUpdate", lobby.LobbyID);
                 NavigationManager.NavigateTo($"/connectMain/{game.GameID}");
             }
 
         }
+    }
+
+    public async Task OnStartClickHotSeat()
+    {
+        Player HotSeatPlayer = new("HotSeatPlayer");
+        ConnectFourGame game = ConnectFourGameServices.CreateGame(lobbyID, lobby.Players[0], HotSeatPlayer);
+        await LobbyServices.StartGame(lobby.LobbyID);
+        await hubConnection.SendAsync("LobbyUpdate", lobby.LobbyID);
+        NavigationManager.NavigateTo($"/connectMain/{game.GameID}");
     }
 
     public async Task OnRefresh()

@@ -17,13 +17,13 @@ namespace BSquadGames.Classes.ConnectFour
             int randomNumber = random.Next(0, 6);
 
             (int, int) moveToMake = GameManager.ValidMoves[randomNumber];
-            GameManager.MakeMove(moveToMake);
+            GameManager.MakeMove(moveToMake, false);
         }
 
         public void MakeAnAIMove2()
         {
             (int, int) moveToMake = FindBestMove();
-            GameManager.MakeMove(moveToMake);
+            GameManager.MakeMove(moveToMake, false);
         }
 
 
@@ -34,11 +34,36 @@ namespace BSquadGames.Classes.ConnectFour
             int bestScore = int.MinValue;
             (int, int) bestMove = (-1, -1);
 
+            // If the middle is free it places there
+ 
+            ConnectFourGameManager copyStandard = GameManager.DeepCopyManager();
+            if (copyStandard.ValidMoves.Contains((5, 3)))
+            {
+                return (5, 3);
+            }
+
+            Random random = new Random();
+            int randomNumber = random.Next(0, 2);
+
+
+            if (copyStandard.ValidMoves.Contains((5, 2)) && copyStandard.ValidMoves.Contains((5, 4)))
+            {
+                if (randomNumber == 0)
+                {
+                    return (5, 2);
+                }
+                if (randomNumber == 1)
+                {
+                    return (5, 4);
+                }
+                            
+            }            
+          
             // If the AI can win in 1 move it will
             foreach (var move in GameManager.ValidMoves)
             {
-                var copy = GameManager.DeepCopyManager();
-                copy.MakeMove(move);
+                ConnectFourGameManager copy = GameManager.DeepCopyManager();
+                copy.MakeMove(move, true);
 
                 if (copy.GameWon && copy.GameWinner == 2) 
                 {
@@ -50,7 +75,7 @@ namespace BSquadGames.Classes.ConnectFour
             foreach (var move in GameManager.ValidMoves)
             {
                 ConnectFourGameManager copy = GameManager.DeepCopyManager();
-                copy.MakeMove(move);
+                copy.MakeMove(move, true);
 
                 int score = MinMaxAlgorithm(copy, 1, alpha, beta, 2);
 
@@ -93,7 +118,7 @@ namespace BSquadGames.Classes.ConnectFour
                 foreach (var move in copyManager.ValidMoves)
                 {
                     var childCopy = copyManager.DeepCopyManager();
-                    childCopy.MakeMove(move);
+                    childCopy.MakeMove(move, true);
                     int eval = MinMaxAlgorithm(childCopy, 1, alpha, beta, depth - 1);
                     maxEval = Math.Max(maxEval, eval);
                     alpha = Math.Max(alpha, eval);
@@ -108,7 +133,7 @@ namespace BSquadGames.Classes.ConnectFour
                 foreach (var move in copyManager.ValidMoves)
                 {
                     var childCopy = copyManager.DeepCopyManager();
-                    childCopy.MakeMove(move);
+                    childCopy.MakeMove(move, true);
                     int eval = MinMaxAlgorithm(childCopy, 2, alpha, beta, depth - 1);
                     minEval = Math.Min(minEval, eval);
                     beta = Math.Min(beta, eval);

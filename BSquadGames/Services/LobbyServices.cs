@@ -126,10 +126,11 @@ namespace BSquadGames.Services
             return false;
         }
 
-        public bool StartGame(string lobbyId)
+        public async Task<bool> StartGame(string lobbyID)
         {
 
-            if (activeLobbies.TryGetValue(lobbyId, out var lobby))
+            await hubContext.Clients.Group(lobbyID).SendAsync("LobbyUpdate");
+            if (activeLobbies.TryGetValue(lobbyID, out var lobby))
             {
                 if (lobby.CheckIsFull() && !lobby.GameStarted)
                 {

@@ -17,8 +17,12 @@ namespace BSquadGames.Classes.ConnectFour
 
         public bool IsAIActive = false;
         public bool IsAIStartActive = false;
+        private bool LockGame = false;
+        private int GameCount = 0;
+
 
         public int CurrentPlayer { get; set; }
+        private int StartingPlayer = 1;
 
         public ConnectFourGameManager(Player player1, Player player2) 
         {
@@ -31,43 +35,64 @@ namespace BSquadGames.Classes.ConnectFour
 
         public void StartNewGame()
         {
-                     
+            GameCount++;
             ConnectFourBoard.CreateNewBoard();
-            CheckWinner();
+            CheckWinner(false);
+            LockGame = false;
             ConnectFourBoard.GetListPossibleCellsToPlaceDiscAt();
 
-            if (IsAIStartActive)
+            // Wissel startende speler
+            if (StartingPlayer == 1)
             {
-                CurrentPlayer = 2;
-                MakeAIMove();
+                StartingPlayer = 2;
             }
             else
             {
-                CurrentPlayer = 1;
+                StartingPlayer = 1;
+            }
+
+            CurrentPlayer = StartingPlayer;
+
+            // Laat AI starten indien AI actief is én hij mag beginnen
+            if (IsAIActive && CurrentPlayer == 2)
+            {
+                MakeAIMove();
             }
 
 
         }
 
-        public void MakeMove((int, int) clickCords)
+        public void MakeMove((int, int) clickCords, bool isAIMove)
         {
-                               
-            if (ConnectFourBoard.DiscPlacement.Contains((clickCords.Item1, clickCords.Item2)))
+
+            if (!LockGame)
             {
-                // Place disc for current player
-                ConnectFourBoard.SetDiscAt(clickCords.Item1, clickCords.Item2, CurrentPlayer);
-
-                CheckWinner();
-
-                // Switch to next player
-                if (CurrentPlayer == 1)
+                if (ConnectFourBoard.DiscPlacement.Contains((clickCords.Item1, clickCords.Item2)))
                 {
-                    CurrentPlayer = 2;
+                    // Place disc for current player
+                    ConnectFourBoard.SetDiscAt(clickCords.Item1, clickCords.Item2, CurrentPlayer);
+
+                    CheckWinner(isAIMove);
+
+                    if (!GameWon)
+                    {
+                        // Switch to next player
+                        if (CurrentPlayer == 1)
+                        {
+                            CurrentPlayer = 2;
+                        }
+                        else
+                        {
+                            CurrentPlayer = 1;
+                        }
+                    }
+                    else
+                    {
+                        LockGame = true;
+                    }
                 }
-                else
-                {
-                    CurrentPlayer = 1;
-                }
+
+
 
             }
 
@@ -80,14 +105,18 @@ namespace BSquadGames.Classes.ConnectFour
         /// Checks if either player has won the game.
         /// Updates the GameWon and GameWinner properties accordingly.
         /// </summary>
-        public void CheckWinner()
+        public void CheckWinner(bool isAIMove)
         {
             // Check if player 1 has a winning combination
             if (ConnectFourBoard.CheckWin(1) == true)
             {
                 GameWon = true;
                 GameWinner = 1;
-                Player1.Score++;
+                if(!isAIMove)
+                {
+                    Player1.Score++;
+                }
+                
 
             }
             // If not, check if player 2 has won
@@ -95,7 +124,11 @@ namespace BSquadGames.Classes.ConnectFour
             {
                 GameWon = true;
                 GameWinner = 2;
-                Player2.Score++;
+
+                if (!isAIMove)
+                {
+                    Player2.Score++;
+                }
 
             }
             // If neither player has won, the game is still ongoing or a draw
@@ -115,7 +148,7 @@ namespace BSquadGames.Classes.ConnectFour
             
             if (IsAIActive)
             {
-                MakeMove(bestMove);
+                MakeMove(bestMove, false);
             }
         }
 

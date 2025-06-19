@@ -172,6 +172,7 @@ else
         if (await LobbyServices.JoinLobbyAsync(lobbyID, player))
         {
             await hubConnection.InvokeAsync("JoinLobbyGroup", lobbyID);
+            await hubConnection.SendAsync("LobbyUpdate", lobbyID);
             NavigationManager.NavigateTo($"/lobby/{lobbyID}");
         }
         else

@@ -72,6 +72,8 @@
 
 <!-- DEBUG INFORMATION -->
 <div></div>
+<div>@GameManager.IsAIActive</div>
+<div>@GameManager.CurrentPlayer</div>
 <div>@GameManager.GameWinner</div>
 <div>game is won: @GameManager.GameWon</div>
 <div>
@@ -81,11 +83,20 @@
 <button @onclick="NewGame">New Game!</button>
 <button @onclick="BackToLobby">Back to lobby</button>
 <div></div>
+<!--
 To Activate an AI ->
 <input type="checkbox" @bind="IsChecked" />
 <div></div>
-To Let AI start ->
-<input type="checkbox" @bind="AIStart" />
+-->
+@if (game != null && game.GameID.Contains("BOT_GAME_"))
+{
+    <div>
+        To Let AI start ->
+        <input type="checkbox" @bind="AIStart" />
+    </div>
+}
+
+
 
 <div>@currentlyMouseOverSquare</div>
 @foreach((int, int) freespots in GameManager.ValidMoves){
@@ -120,7 +131,13 @@ To Let AI start ->
 
         GameManager = game.Manager;
         //GameManager.StartNewGame();
+        if (game.GameID.Contains("BOT_GAME_"))
+        {
+            GameManager.IsAIActive = true;
+            IsChecked = true;
+        }
 
+        NewGame();
     }
 
     // Starts a new game: resets board and updates valid moves
@@ -146,16 +163,10 @@ To Let AI start ->
     // Handles clicking a valid cell to place a disc
     public void OnClick((int, int) id)
     {
-        GameManager.MakeMove(id);
-        if (IsChecked)
+        GameManager.MakeMove(id, false);
+        if (IsChecked && GameManager.CurrentPlayer == 2)
         {
-            GameManager.IsAIActive = true;
             GameManager.MakeAIMove();
-        }
-        else
-        {
-            GameManager.IsAIActive = false;
-
         }
 
     }

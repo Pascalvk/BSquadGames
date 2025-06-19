@@ -17,7 +17,16 @@ namespace BSquadGames.Classes.ConnectFour
             Player2 = player2;
             Manager = new(player1, player2);
 
-            GameID = Guid.NewGuid().ToString();
+            string GUID = Guid.NewGuid().ToString();
+            if (player2.Name == "AI_BOT_DONT_CHANGE_THIS_NAME")
+            {
+                GameID = "BOT_GAME_" + GUID;
+            }
+            else
+            {
+                GameID = GUID;
+            }
+
         }
     }
 }
