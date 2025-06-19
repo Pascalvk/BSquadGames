@@ -1,4 +1,5 @@
-﻿using BSquadGames.Classes.ConnectFour;
+﻿using BSquadGames.Classes.Common;
+using BSquadGames.Classes.ConnectFour;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,14 @@ namespace BSquadTesting.ConnectFour
     [TestClass]
     public class BoardTests
     {
+        Player player1 = new("1");
+        Player player2 = new("2");
+        
         // Test for horizontal win condition
         [TestMethod]
         public void CheckWin_HorizontalWin_ReturnsTrue()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             // Place four discs horizontally
             manager.ConnectFourBoard.SetDiscAt(0, 0, 1);
@@ -22,7 +26,7 @@ namespace BSquadTesting.ConnectFour
             manager.ConnectFourBoard.SetDiscAt(0, 2, 1);
             manager.ConnectFourBoard.SetDiscAt(0, 3, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsTrue(manager.GameWon);
         }
@@ -31,7 +35,7 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_HorizontalNoWin_ReturnsFalse()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             // Interrupt the sequence with a 0 (empty)
             manager.ConnectFourBoard.SetDiscAt(0, 0, 1);
@@ -39,7 +43,7 @@ namespace BSquadTesting.ConnectFour
             manager.ConnectFourBoard.SetDiscAt(0, 2, 1);
             manager.ConnectFourBoard.SetDiscAt(0, 3, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsFalse(manager.GameWon);
         }
@@ -48,7 +52,7 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_VerticalWin_ReturnsTrue()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             // Place four discs vertically in the same column
             manager.ConnectFourBoard.SetDiscAt(0, 0, 1);
@@ -56,7 +60,7 @@ namespace BSquadTesting.ConnectFour
             manager.ConnectFourBoard.SetDiscAt(2, 0, 1);
             manager.ConnectFourBoard.SetDiscAt(3, 0, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsTrue(manager.GameWon);
         }
@@ -65,7 +69,7 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_VerticalNoWin_ReturnsFalse()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             // Sequence broken by empty cell
             manager.ConnectFourBoard.SetDiscAt(0, 0, 1);
@@ -73,7 +77,7 @@ namespace BSquadTesting.ConnectFour
             manager.ConnectFourBoard.SetDiscAt(2, 0, 1);
             manager.ConnectFourBoard.SetDiscAt(3, 0, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsFalse(manager.GameWon);
         }
@@ -82,7 +86,7 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_DiagonalUpLeftWin_ReturnsTrue()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             // Diagonal: bottom-left to top-right
             manager.ConnectFourBoard.SetDiscAt(0, 0, 1);
@@ -90,7 +94,7 @@ namespace BSquadTesting.ConnectFour
             manager.ConnectFourBoard.SetDiscAt(2, 2, 1);
             manager.ConnectFourBoard.SetDiscAt(3, 3, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsTrue(manager.GameWon);
         }
@@ -99,7 +103,7 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_DiagonalUpRightWin_ReturnsTrue()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             // Diagonal: bottom-right to top-left
             manager.ConnectFourBoard.SetDiscAt(3, 0, 1);
@@ -107,7 +111,7 @@ namespace BSquadTesting.ConnectFour
             manager.ConnectFourBoard.SetDiscAt(1, 2, 1);
             manager.ConnectFourBoard.SetDiscAt(0, 3, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsTrue(manager.GameWon);
         }
@@ -116,14 +120,14 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_DiagonalUpLeftWin_EdgeBottomRight_ReturnsTrue()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             manager.ConnectFourBoard.SetDiscAt(2, 6, 1);
             manager.ConnectFourBoard.SetDiscAt(3, 5, 1);
             manager.ConnectFourBoard.SetDiscAt(4, 4, 1);
             manager.ConnectFourBoard.SetDiscAt(5, 3, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsTrue(manager.GameWon);
         }
@@ -132,14 +136,14 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_DiagonalUpRightWin_EdgeBottomLeft_ReturnsTrue()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             manager.ConnectFourBoard.SetDiscAt(5, 0, 1);
             manager.ConnectFourBoard.SetDiscAt(4, 1, 1);
             manager.ConnectFourBoard.SetDiscAt(3, 2, 1);
             manager.ConnectFourBoard.SetDiscAt(2, 3, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsTrue(manager.GameWon);
         }
@@ -148,7 +152,7 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_DiagonalNoWin_ReturnsFalse()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             // One cell in the diagonal is empty (or wrong)
             manager.ConnectFourBoard.SetDiscAt(0, 0, 1);
@@ -156,7 +160,7 @@ namespace BSquadTesting.ConnectFour
             manager.ConnectFourBoard.SetDiscAt(2, 2, 1);
             manager.ConnectFourBoard.SetDiscAt(3, 3, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsFalse(manager.GameWon);
         }
@@ -165,14 +169,14 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckOutOfBounds_Horizontal()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             manager.ConnectFourBoard.SetDiscAt(0, 3, 1);
             manager.ConnectFourBoard.SetDiscAt(0, 4, 1);
             manager.ConnectFourBoard.SetDiscAt(0, 5, 1);
             manager.ConnectFourBoard.SetDiscAt(0, 6, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsTrue(manager.GameWon);
         }
@@ -181,13 +185,13 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_DiagonalUpRight_OnlyThreeInARow_ReturnsFalse()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             manager.ConnectFourBoard.SetDiscAt(5, 0, 1);
             manager.ConnectFourBoard.SetDiscAt(4, 1, 1);
             manager.ConnectFourBoard.SetDiscAt(3, 2, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsFalse(manager.GameWon);
         }
@@ -196,14 +200,14 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_DiagonalUpLeft_InterruptedSequence_ReturnsFalse()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             manager.ConnectFourBoard.SetDiscAt(2, 6, 1);
             manager.ConnectFourBoard.SetDiscAt(3, 5, 2); // opponent disc interrupts
             manager.ConnectFourBoard.SetDiscAt(4, 4, 1);
             manager.ConnectFourBoard.SetDiscAt(5, 3, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsFalse(manager.GameWon);
         }
@@ -212,7 +216,7 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_MixedBoard_NoWin_ReturnsFalse()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             // Alternating players, no win condition met
             manager.ConnectFourBoard.SetDiscAt(0, 0, 1);
@@ -224,7 +228,7 @@ namespace BSquadTesting.ConnectFour
             manager.ConnectFourBoard.SetDiscAt(1, 2, 2);
             manager.ConnectFourBoard.SetDiscAt(1, 3, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsFalse(manager.GameWon);
         }
@@ -233,14 +237,14 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_VerticalWin_TopEdge_ReturnsTrue()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             manager.ConnectFourBoard.SetDiscAt(2, 0, 1);
             manager.ConnectFourBoard.SetDiscAt(3, 0, 1);
             manager.ConnectFourBoard.SetDiscAt(4, 0, 1);
             manager.ConnectFourBoard.SetDiscAt(5, 0, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsTrue(manager.GameWon);
         }
@@ -249,14 +253,14 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_DiagonalUpRight_TopEdge_ReturnsTrue()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             manager.ConnectFourBoard.SetDiscAt(2, 3, 1);
             manager.ConnectFourBoard.SetDiscAt(3, 4, 1);
             manager.ConnectFourBoard.SetDiscAt(4, 5, 1);
             manager.ConnectFourBoard.SetDiscAt(5, 6, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsTrue(manager.GameWon);
         }
@@ -265,7 +269,7 @@ namespace BSquadTesting.ConnectFour
         [TestMethod]
         public void CheckWin_MultipleWinConditions_ReturnsTrue()
         {
-            ConnectFourGameManager manager = new ConnectFourGameManager();
+            ConnectFourGameManager manager = new ConnectFourGameManager(player1, player2);
 
             // Horizontal win
             manager.ConnectFourBoard.SetDiscAt(0, 0, 1);
@@ -278,7 +282,7 @@ namespace BSquadTesting.ConnectFour
             manager.ConnectFourBoard.SetDiscAt(2, 2, 1);
             manager.ConnectFourBoard.SetDiscAt(3, 3, 1);
 
-            manager.CheckWinner();
+            manager.CheckWinner(false);
 
             Assert.IsTrue(manager.GameWon);
         }
